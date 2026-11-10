@@ -10,7 +10,7 @@
 | `decisions/` | 확정된 설계 결정. 한 결정당 한 파일 (`NNNN-제목.md`) |
 | `../.forge/CONTEXT.md` | 용어집 (에이전트, 세션, 작업 폴더, 소유자 등) |
 | `roadmap.md` | MVP 이후 검토 항목, 흐릿한 주제, 범위 밖 |
-| `architecture.md` | (예정) 결정들이 모인 뒤 작성하는 전체 구조 문서 |
+| `architecture.md` | 1단계 코어 엔진의 구조와 공개 계약 (`tests/acceptance/`가 검증) |
 
 ## 진행 방식
 
