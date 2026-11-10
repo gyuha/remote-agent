@@ -1,0 +1,63 @@
+version: '3'
+
+vars:
+  CONFIG: '{{.CONFIG | default "config.json"}}'
+
+tasks:
+  install:
+    desc: 의존성 설치
+    cmd: pnpm install --frozen-lockfile
+
+  build:
+    desc: packages/server 빌드 (dist 생성)
+    deps: [install]
+    cmd: pnpm -r build
+
+  config:
+    desc: config.example.json을 config.json으로 복사 (이미 있으면 그대로 둠)
+    status:
+      - test -f {{.CONFIG}}
+    cmd: cp config.example.json {{.CONFIG}}
+
+  start:
+    desc: 빌드 후 서버 실행 (task start CONFIG=경로, 토큰은 TELEGRAM_BOT_TOKEN 환경변수로도 가능)
+    deps: [build]
+    preconditions:
+      - sh: test -f {{.CONFIG}}
+        msg: '{{.CONFIG}}가 없습니다. `task config`로 만든 뒤 값을 채우세요.'
+    cmd: node packages/server/dist/main.js {{.CONFIG}}
+
+  dev:
+    desc: 소스(src)를 strip-types로 직접 실행 (MCP 브리지는 dist를 쓰므로 build도 함께 수행)
+    deps: [build]
+    preconditions:
+      - sh: test -f {{.CONFIG}}
+        msg: '{{.CONFIG}}가 없습니다. `task config`로 만든 뒤 값을 채우세요.'
+    cmd: node --experimental-strip-types packages/server/src/main.ts {{.CONFIG}}
+
+  test:
+    desc: 단위 테스트
+    deps: [install]
+    cmd: pnpm -r test
+
+  test:acceptance:
+    desc: 고정 인수 테스트 (가짜 텔레그램·CLI 사용)
+    deps: [install]
+    cmd: pnpm test:acceptance
+
+  lint:
+    desc: eslint
+    deps: [install]
+    cmd: pnpm lint
+
+  check:
+    desc: 빌드·lint·단위·인수 테스트 전부
+    cmds:
+      - task: build
+      - task: lint
+      - task: test
+      - task: test:acceptance
+
+  clean:
+    desc: 빌드 산출물 삭제
+    cmd: rm -rf packages/server/dist

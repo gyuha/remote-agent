@@ -1,0 +1,11 @@
+{
+  "dataDir": "./data",
+  "telegram": {
+    "token": "",
+    "ownerId": 123456789,
+    "groupChatId": -1001234567890,
+    "defaultAgent": { "folder": "../my-project", "name": "dev" }
+  },
+  "folders": ["../my-project"],
+  "cli": { "claudeBin": "claude", "codexBin": "codex" }
+}
